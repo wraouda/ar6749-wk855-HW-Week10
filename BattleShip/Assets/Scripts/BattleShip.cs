@@ -17,14 +17,15 @@ public class BattleShip : MonoBehaviour
     
     //set up a bool to test if player hits a ship
     private int YouHitTheShip = 1;
-    
+    private bool hasShip = false; // Check to see if there is a ship
+
     //if you didn't hit ship, generate a grey spot and put into list
     private List<GameObject> spawnedSpots = new List<GameObject>();
 
     public GameObject greyPrefab, redPrefab;
-
-    public int row = 0;
+    
     public int col= 0 ;
+    public int row = 0;
 
     void Start()
     {
@@ -40,6 +41,10 @@ public class BattleShip : MonoBehaviour
             }
         }
         
+        // place the ship 
+
+        grid[1, 4] = 1; // this is the ship
+
     }
 
     // Update is called once per frame
@@ -56,6 +61,7 @@ public class BattleShip : MonoBehaviour
             youWin();
         }
 
+        
     }
     public bool noShip(int x, int y)
     {
@@ -111,23 +117,36 @@ public class BattleShip : MonoBehaviour
     }
     
     //location position
-    public int locationPositionX(int row)
+    public void locationPositionX(int row)
     {
-        return row;
+        return;
     }
 
-    public int locationPositionY(int col)
+    public void locationPositionY(int col)
     {
-        return col;
+        return;
     }
 
 
     // if the spot is empty, check the spot, and then drop something
 
-
-    public void CheckPosition()
+    public void DestoryCol()
     {
-        if (!isEmpty) return;
+        // Check to see if there is a ship in this col, if not destory the col
+        for (var y = 0; y < height; y++)
+        {
+            if (!isEmpty(x, y))
+            {
+                if (redTurn)
+                    grid[column, y] = 2;
+                else
+                    grid[column, y] = 1;
+            }
+        }
+
+        public void CheckPosition (int x, int y)
+    {
+        // if (!isEmpty(row,col)) return;
         /*
           // use grid[row, column]==value to check status
           
@@ -160,12 +179,14 @@ public class BattleShip : MonoBehaviour
             if (grid[row, col] == 1)
             {
                 return 1;
+                youWin();
             }
         }
 
         UpdateDisplay();
+        return 2;
     }
         
 
     }
-}
+
