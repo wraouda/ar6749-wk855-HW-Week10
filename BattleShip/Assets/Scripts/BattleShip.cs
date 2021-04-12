@@ -9,9 +9,11 @@ public class BattleShip : MonoBehaviour
     public int width = 10;
     public int height = -9;
     private int[,] grid;
+    
+    // adding offsets to move the grid around
     public int xOffset;
     public int yOffset;
-
+    // display text
     public Text display;
     
     //set up a bool to test if player hits a ship
@@ -20,11 +22,11 @@ public class BattleShip : MonoBehaviour
 
     //if you didn't hit ship, generate a grey spot and put into list
     private List<GameObject> spawnedSpots = new List<GameObject>();
-
+    
     public GameObject greyPrefab, redPrefab; // hit and miss markers
 
-    public int col;
-    public int row;
+    public int col; // adding columns
+    public int row; // adding rows
 
     void Start()
     {
@@ -43,7 +45,9 @@ public class BattleShip : MonoBehaviour
         // place the ship 
 
         grid[1, 4] = 1;
- 
+        grid[3, 3] = 1;
+        grid[7, 8] = 1;
+
 
     }
 
@@ -55,7 +59,7 @@ public class BattleShip : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-
+// if you hit the ship 3 times, you win
         if (YouHitTheShip > 2)
         {
             youWin();
@@ -63,6 +67,8 @@ public class BattleShip : MonoBehaviour
 
         
     }
+    
+    // grid setting no ship seen to 0
     public bool noShip(int x, int y)
     {
         return grid[x, y] == 0;
@@ -81,7 +87,7 @@ public class BattleShip : MonoBehaviour
         return grid[x, y] == 2;
     }
 
-    public void UpdateDisplay()
+    public void UpdateDisplay() // this is never called
     {
         foreach (var piece in spawnedSpots)
         {
@@ -111,6 +117,7 @@ public class BattleShip : MonoBehaviour
         
     }
     
+   // display a "you win" text when you hit 3 different ships
     public void youWin()
     {
         display.text = "Good job! You win;)";
@@ -119,6 +126,7 @@ public class BattleShip : MonoBehaviour
 
     // if the spot is empty, check the spot, and then drop something
 
+    /*
     public void DestoryCol(int column)
     {
         foreach (var piece in spawnedSpots)
@@ -179,29 +187,26 @@ public class BattleShip : MonoBehaviour
             noShipSprite.transform.position = new Vector3(x, row);
             spawnedSpots.Add(noShipSprite);
         }
-    }
-
+    }*/
+// check positions for the y clomumns
     public void CheckPositionY(int column)
     {
+        // check if point row,col is empty, if so return
         if (!isEmpty(row, col)) return;
 
         // use grid[row, column]==value to check status
 
         for (var y = 0; y < height; y++)
         {
-            if (grid[column, y] == 2)
+            if (grid[column, y] == 2) // if there is no ship, set every column to be grey
             {
                 var noShipSprite = Instantiate(greyPrefab);
                 noShipSprite.transform.position = new Vector3(column, y);
                 spawnedSpots.Add(noShipSprite);
             }
-           /* if (grid[column, y] == 0)
-            {
-                DestoryColNoShip(column);
-            }*/
 
-            if (grid[column, y] == 1)
-            {
+            if (grid[column, y] == 1) // if there is a ship, set the ship's position to be red
+            { 
                 YouHitTheShip++;
                 var hitShipSprite = Instantiate(redPrefab);
                 hitShipSprite.transform.position = new Vector3(column, y);
@@ -210,35 +215,29 @@ public class BattleShip : MonoBehaviour
         }
         //UpdateDisplay();
     }
-    
+    // check positions for the x rows
     public void CheckPositionX(int row)
     {
         if (!isEmpty(row,col)) return;
 
         // use grid[row, column]==value to check status
 
-        for (var x = 0; x < width; x++)
+        for (var x = 0; x < width; x++) // checks the row for the specific button
         {
-            if (grid[x, row] == 2)
+            if (grid[x, row] == 2) // if it's empty, fill with grey
             {
                 var noShipSprite = Instantiate(greyPrefab);
                 noShipSprite.transform.position = new Vector3(x,row);
                 spawnedSpots.Add(noShipSprite);
             }
-            
-                /*if (grid[x, row] == 0)
-                {
-                    DestoryRowNoShip(row);
-                }*/
 
-                if (grid[x, row] == 1)
+            if (grid[x, row] == 1) // if it isn't fill the space with the ship button
                 {
                     var hitShipSprite = Instantiate(redPrefab);
                     hitShipSprite.transform.position = new Vector3(x, row);
                     spawnedSpots.Add(hitShipSprite);
                 }
         }
-        //UpdateDisplay();
     }
     
     
