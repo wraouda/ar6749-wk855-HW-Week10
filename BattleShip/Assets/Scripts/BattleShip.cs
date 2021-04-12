@@ -5,10 +5,12 @@ using UnityEngine.UI;
 
 public class BattleShip : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // set width and height of the grid
     public int width = 10;
-    public int height = 9;
+    public int height = -9;
     private int[,] grid;
+    public int xOffset;
+    public int yOffset;
 
     public Text display;
     
@@ -19,8 +21,8 @@ public class BattleShip : MonoBehaviour
     //if you didn't hit ship, generate a grey spot and put into list
     private List<GameObject> spawnedSpots = new List<GameObject>();
 
-    public GameObject greyPrefab, redPrefab;
-    
+    public GameObject greyPrefab, redPrefab; // hit and miss markers
+
     public int col;
     public int row;
 
@@ -40,7 +42,8 @@ public class BattleShip : MonoBehaviour
         
         // place the ship 
 
-        grid[1, 4] = 1; // this is the ship
+        grid[1, 4] = 1;
+ 
 
     }
 
@@ -112,23 +115,17 @@ public class BattleShip : MonoBehaviour
     {
         display.text = "Good job! You win;)";
     }
-    
-    //location position
-    /*public void locationPositionX(int row)
-    {
-        return;
-    }
-
-    public void locationPositionY(int col)
-    {
-        return;
-    }*/
 
 
     // if the spot is empty, check the spot, and then drop something
 
     public void DestoryCol(int column)
     {
+        foreach (var piece in spawnedSpots)
+        {
+            Destroy(piece);
+        }
+        spawnedSpots.Clear();
         // Check to see if there is a ship in this col, if not destory the col
         for (var y = 0; y < height; y++)
         {
@@ -140,12 +137,47 @@ public class BattleShip : MonoBehaviour
 
     public void DestoryRow(int row)
     {
+        foreach (var piece in spawnedSpots)
+        {
+            Destroy(piece);
+        }
+        spawnedSpots.Clear();
         for (var x = 0; x < width; x++)
         {
             var hitShipSprite = Instantiate(redPrefab);
             hitShipSprite.transform.position = new Vector3(x, row);
             spawnedSpots.Add(hitShipSprite);
 
+        }
+    }
+    
+    public void DestoryColNoShip(int column)
+    {
+        foreach (var piece in spawnedSpots)
+        {
+            Destroy(piece);
+        }
+        spawnedSpots.Clear();
+        for (var y = 0; y < height; y++)
+        {
+            var noShipSprite = Instantiate(greyPrefab);
+            noShipSprite.transform.position = new Vector3(column, y);
+            spawnedSpots.Add(noShipSprite);
+        }  
+    }
+
+    public void DestoryRowNoShip(int row)
+    {
+        foreach (var piece in spawnedSpots)
+        {
+            Destroy(piece);
+        }
+        spawnedSpots.Clear();
+        for (var x = 0; x < width; x++)
+        {
+            var noShipSprite = Instantiate(greyPrefab);
+            noShipSprite.transform.position = new Vector3(x, row);
+            spawnedSpots.Add(noShipSprite);
         }
     }
 
@@ -157,44 +189,56 @@ public class BattleShip : MonoBehaviour
 
         for (var y = 0; y < height; y++)
         {
+            if (grid[column, y] == 2)
             {
-                if (grid[column, y] == 0)
-                {
-                    return;//DestoryCol(column);
-                }
+                var noShipSprite = Instantiate(greyPrefab);
+                noShipSprite.transform.position = new Vector3(column, y);
+                spawnedSpots.Add(noShipSprite);
+            }
+           /* if (grid[column, y] == 0)
+            {
+                DestoryColNoShip(column);
+            }*/
 
-                if (grid[column, y] == 1)
-                {
-                    YouHitTheShip++;
-                    DestoryCol(column);
-                }
+            if (grid[column, y] == 1)
+            {
+                YouHitTheShip++;
+                var hitShipSprite = Instantiate(redPrefab);
+                hitShipSprite.transform.position = new Vector3(column, y);
+                spawnedSpots.Add(hitShipSprite);
             }
         }
-        UpdateDisplay();
+        //UpdateDisplay();
     }
     
     public void CheckPositionX(int row)
     {
-        if (!isEmpty(row, col)) return;
+        if (!isEmpty(row,col)) return;
 
         // use grid[row, column]==value to check status
 
         for (var x = 0; x < width; x++)
         {
+            if (grid[x, row] == 2)
             {
-                if (grid[x, row] == 0)
+                var noShipSprite = Instantiate(greyPrefab);
+                noShipSprite.transform.position = new Vector3(x,row);
+                spawnedSpots.Add(noShipSprite);
+            }
+            
+                /*if (grid[x, row] == 0)
                 {
-                    DestoryRow(row);
-                }
+                    DestoryRowNoShip(row);
+                }*/
 
                 if (grid[x, row] == 1)
                 {
-                    YouHitTheShip++;
-                    DestoryRow(row);
+                    var hitShipSprite = Instantiate(redPrefab);
+                    hitShipSprite.transform.position = new Vector3(x, row);
+                    spawnedSpots.Add(hitShipSprite);
                 }
-            }
         }
-        UpdateDisplay();
+        //UpdateDisplay();
     }
     
     
